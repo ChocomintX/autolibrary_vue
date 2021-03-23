@@ -18,25 +18,21 @@ export default {
   margin: 0;
   padding: 0;
 }
-
-.main,html,body{
+#app,#main,html,body{
+  height: 100%;
   width: 100%;
 }
 
-.head{
-  width: 100%;
-  height: 50px;
-  color: white;
-  background: #39afff;
-  display: -webkit-flex;
-  align-items: center;
-  justify-content: center;
+#main,html,body{
+
+  /*font-family: "微軟正黑體 Light";*/
 }
 
-.footer{
-  width: 100%;
-  position: fixed;
-  left: 0;
-  bottom: 0;
+#head{
+  padding: 0;
+}
+
+#footer{
+  padding: 0;
 }
 </style>
