@@ -17,11 +17,12 @@
         </el-col>
       </el-row>
 
-      <el-tabs @tab-click="changeView">
+      <el-tabs id="tabs" @tab-click="changeView">
         <el-tab-pane label="按座查人" name="searchSeat"></el-tab-pane>
         <el-tab-pane label="自动抢座" name="autoGrab"></el-tab-pane>
-        <el-tab-pane label="预约座位" name="appointment"></el-tab-pane>
-        <el-tab-pane label="还没写的功能" name=""></el-tab-pane>
+        <el-tab-pane label="清晨抢座" name="morningGrab"></el-tab-pane>
+        <el-tab-pane label="现在预约" name="appointment"></el-tab-pane>
+        <el-tab-pane label="暴力反占座" name="cancelSeat"></el-tab-pane>
       </el-tabs>
 
       <router-view></router-view>
@@ -72,6 +73,16 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   display: -webkit-flex;
+  align-content: center;
+  justify-items: center;
 }
 
+#main{
+  padding: 0;
+  min-height: calc(100vh - 100px);
+}
+
+#tabs{
+  padding: 5px;
+}
 </style>

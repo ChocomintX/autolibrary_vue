@@ -35,4 +35,5 @@ export default {
 #footer{
   padding: 0;
 }
+
 </style>

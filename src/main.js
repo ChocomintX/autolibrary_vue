@@ -9,7 +9,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 
 axios.defaults.baseURL='http://localhost:5000/autolibrary/api/'
-Vue.prototype.$htpp=axios
+Vue.prototype.$http=axios
 
 new Vue({
   render: h => h(App),

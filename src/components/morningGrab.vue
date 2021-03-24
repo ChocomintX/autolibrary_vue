@@ -25,7 +25,7 @@
         </el-form-item>
 
         <el-form-item label-width="0">
-          <el-button :loading="loading" @click="submit('Form')" style="width: 100%" type="primary">预约</el-button>
+          <el-button disabled :loading="loading" @click="submit('Form')" style="width: 100%" type="primary">预约</el-button>
         </el-form-item>
       </el-form>
 
@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: "appointment",
+  name: "morningGrab",
   data() {
     let isNum = (rule, value, callback) => {
       if (value === '') {

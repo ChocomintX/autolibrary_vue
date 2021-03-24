@@ -6,7 +6,7 @@ module.exports = {
     productionSourceMap: false, //去除打包后js的map文件
     devServer: { //启动项目在8080端口自动打开
         open: true,
-        port: 8080,
+        port: 80,
         proxy: null
     },
     //去掉console

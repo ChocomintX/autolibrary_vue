@@ -32,9 +32,10 @@ export default {
   methods:{
     login() {
       const loading=this.$loading({
-        lock:true
+        lock:true,
+        fullscreen:false
       })
-      this.$htpp.post('bindUser', {
+      this.$http.post('bindUser', {
         username:this.formLabelAlign.username,
         password:this.formLabelAlign.password,
       }).then(r=>{
