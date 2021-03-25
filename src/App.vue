@@ -36,4 +36,12 @@ export default {
   padding: 0;
 }
 
+.el-message-box{
+  width: auto !important;
+  min-width: 200px !important;;
+}
+
+.el-message{
+  min-width: 300px !important;
+}
 </style>

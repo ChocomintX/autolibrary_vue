@@ -8,6 +8,9 @@
         <el-form-item label="密码">
           <el-input v-model="formLabelAlign.password"></el-input>
         </el-form-item>
+        <el-form-item label="py码">
+          <el-input v-model="formLabelAlign.activecode"></el-input>
+        </el-form-item>
 
         <el-form-item label-width="0">
           <el-button @click="login" style="width: 100%" type="primary">登录</el-button>
@@ -25,7 +28,8 @@ export default {
     return{
       formLabelAlign: {
         username:'',
-        password:''
+        password:'',
+        activecode:''
       }
     }
   },
@@ -38,6 +42,7 @@ export default {
       this.$http.post('bindUser', {
         username:this.formLabelAlign.username,
         password:this.formLabelAlign.password,
+        activecode:this.formLabelAlign.activecode
       }).then(r=>{
         if(r.data['code']===0){
           this.$message.success(r.data['msg'])

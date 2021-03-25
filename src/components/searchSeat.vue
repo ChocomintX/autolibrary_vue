@@ -1,10 +1,22 @@
 <template>
   <el-container>
     <el-main>
+      <el-tag style="margin-top: -20px" type="success" v-show="show">
+        <div id="showInfo" >
+          <h1 style="color: green">查询成功！</h1>
+          <div>
+            你想要找的或许是<span>{{ info.department }}</span><span>{{ info.id.slice(0, 2) }}级</span><span>{{ info.id.slice(6, 8) }}班</span>的<span>{{ info.name }}</span>同学!
+          </div>
+          <div>
+            ta在<span>{{ info.startTime.split(' ')[1] }}</span>就已经来了图书馆，<span>{{ info.endTime.split(' ')[1] }}</span>应该就要走了
+          </div>
+          <div>
+            <b>还不抓住机会搭个讪吗？</b>
+          </div>
+        </div>
+      </el-tag>
       <el-form label-position="left" label-width="80px" :model="formLabelAlign">
-        <el-form-item label-width="0">
-          <img id="searchImg" src="../assets/searchSeat.gif">
-        </el-form-item>
+
         <el-form-item label="自习室">
           <el-select style="width: 100%" v-model="formLabelAlign.roomID" placeholder="请选择">
             <el-option
@@ -21,22 +33,12 @@
         <el-form-item label-width="0">
           <el-button :loading="loading" id="search" type="primary" @click="search" style="width: 100%">查询</el-button>
         </el-form-item>
+        <el-form-item label-width="0">
+          <img id="searchImg" src="../assets/searchSeat.gif">
+        </el-form-item>
       </el-form>
 
       <el-progress v-show="false" :text-inside="true" :stroke-width="24" :percentage="process" :status="status"></el-progress>
-
-      <div id="showInfo" v-show="show">
-        <h1 style="color: green">查询成功！</h1>
-        <div>
-          你想要找的或许是<span>{{ info.department }}</span><span>{{ info.id.slice(0, 2) }}级</span><span>{{ info.id.slice(6, 8) }}班</span>的<span>{{ info.name }}</span>同学!
-        </div>
-        <div>
-          ta在<span>{{ info.startTime.split(' ')[1] }}</span>就已经来了图书馆，<span>{{ info.endTime.split(' ')[1] }}</span>应该就要走了
-        </div>
-        <div>
-          <b>还不抓住机会搭个讪吗？</b>
-        </div>
-      </div>
     </el-main>
   </el-container>
 </template>
@@ -149,11 +151,11 @@ export default {
 
 <style scoped>
 #showInfo > h1 {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 #showInfo > div {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 #showInfo span {
@@ -163,7 +165,17 @@ export default {
 
 #searchImg{
   width: 100%;
-  margin-top: -20px;
+  margin-top: -10px;
+  margin-bottom: -40px;
+}
+
+.el-tag{
+  height: auto;
+  width: 100%;
+  white-space:normal;
+  word-break: break-all;
+  margin-bottom: 20px;
+  font-size: 15px;
 }
 
 </style>

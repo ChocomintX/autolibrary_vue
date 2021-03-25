@@ -1,8 +1,8 @@
 <template>
   <el-container>
     <el-main>
-      <el-form label-position="left" label-width="80px" :model="formLabelAlign">
-        <el-form-item label="自习室">
+      <el-form :rules="rules" ref="Form" label-position="left" label-width="80px" :model="formLabelAlign">
+        <el-form-item prop="roomID" label="自习室">
           <el-select style="width: 100%" v-model="formLabelAlign.roomID" placeholder="请选择">
             <el-option
                 v-for="item in options"
@@ -12,20 +12,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="座位号">
+        <el-form-item prop="seatNo" label="座位号">
           <el-input v-model="formLabelAlign.seatNo" placeholder="输入地图上显示的数字即可"></el-input>
         </el-form-item>
 
-        <el-form-item label="开始时间">
-          <el-time-picker placeholder="开始时间" v-model="formLabelAlign.startTime"></el-time-picker>
-        </el-form-item>
-
-        <el-form-item label="结束时间">
-          <el-time-picker placeholder="结束时间" v-model="formLabelAlign.endTime"></el-time-picker>
-        </el-form-item>
-
         <el-form-item label-width="0">
-          <el-button disabled @click="submit" style="width: 100%" type="primary">预约</el-button>
+          <el-button :loading="loading" @click="submit('Form')" style="width: 100%" type="primary">踢了</el-button>
         </el-form-item>
       </el-form>
 
@@ -37,8 +29,24 @@
 export default {
   name: "cancelSeat",
   data() {
+    let isNum = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('不能为空'))
+      } else if (isNaN(value)) {
+        callback(new Error('只能输入数字'));
+      } else {
+        callback();
+      }
+    }
+
     return {
-      formLabelAlign: {},
+      formLabelAlign: {
+        roomID: '',
+        seatNo: '',
+        startTime: '',
+        endTime: ''
+      },
+      loading:false,
       options: [{
         value: '2021',
         label: '东区学习室2-1'
@@ -69,12 +77,51 @@ export default {
       }, {
         value: '2062',
         label: '东区6楼声像阅览室'
-      }]
+      }],
+      rules: {
+        roomID: [
+          {required: true, message: '请选择自习室', trigger: 'blur'},
+        ],
+        seatNo: [
+          {required: true,validator: isNum, trigger: 'blur'},
+        ]
+      }
     }
   },
   methods: {
-    submit() {
-      console.log(1)
+    submit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.loading=true;
+          this.$http.post('cancelSeat',{
+            token:localStorage.getItem('token'),
+            roomID:this.formLabelAlign.roomID,
+            seatNo:this.formLabelAlign.seatNo
+          }).then(r=>{
+            if(r.data.code==1){
+              this.$message.error(r.data.msg);
+            }else{
+              this.$message.success(r.data.msg);
+            }
+            this.loading=false;
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+
+
+    }
+  },
+  created() {
+    let token=localStorage.getItem('token')
+    if(token==null){
+      this.$msgbox.alert('还未登录！','提示',{
+        callback:()=>{
+          this.$router.push('/searchSeat')
+        }
+      })
     }
   }
 }

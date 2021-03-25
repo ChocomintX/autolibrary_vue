@@ -147,6 +147,17 @@ export default {
       });
 
 
+    },
+
+  },
+  created() {
+    const token = localStorage.getItem('token');
+    if (token == null) {
+      this.$msgbox.alert('未登录无法使用此功能','提示',{
+        callback:()=>{
+          this.$router.push('/searchSeat')
+        }
+      })
     }
   }
 }
