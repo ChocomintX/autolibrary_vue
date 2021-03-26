@@ -19,6 +19,7 @@
 
       <el-tabs id="tabs" @tab-click="changeView">
         <el-tab-pane label="按座查人" name="searchSeat"></el-tab-pane>
+        <el-tab-pane label="按人查座" name="searchPeople"></el-tab-pane>
         <el-tab-pane label="自动抢座" name="autoGrab"></el-tab-pane>
         <el-tab-pane label="暴力反占座" name="cancelSeat"></el-tab-pane>
         <el-tab-pane label="现在预约" name="appointment"></el-tab-pane>

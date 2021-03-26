@@ -6,6 +6,7 @@ import autoGrab from "@/components/autoGrab";
 import login from "@/components/login";
 import appointment from "@/components/appointment";
 import cancelSeat from "@/components/cancelSeat";
+import searchPeople from "@/components/searchPeople";
 
 Vue.use(VueRouter)
 
@@ -28,6 +29,9 @@ export default new VueRouter({
             },{
                 path:'/cancelSeat',
                 component:cancelSeat
+            },{
+                path:'/searchPeople',
+                component:searchPeople
             }]
         },
         {

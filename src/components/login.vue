@@ -9,7 +9,7 @@
           <el-input v-model="formLabelAlign.password"></el-input>
         </el-form-item>
         <el-form-item label="py码">
-          <el-input v-model="formLabelAlign.activecode"></el-input>
+          <el-input v-model="formLabelAlign.pycode"></el-input>
         </el-form-item>
 
         <el-form-item label-width="0">
@@ -29,7 +29,7 @@ export default {
       formLabelAlign: {
         username:'',
         password:'',
-        activecode:''
+        pycode:''
       }
     }
   },
@@ -42,7 +42,7 @@ export default {
       this.$http.post('bindUser', {
         username:this.formLabelAlign.username,
         password:this.formLabelAlign.password,
-        activecode:this.formLabelAlign.activecode
+        pycode:this.formLabelAlign.pycode
       }).then(r=>{
         if(r.data['code']===0){
           this.$message.success(r.data['msg'])

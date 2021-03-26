@@ -28,15 +28,6 @@
           <el-input v-model="formLabelAlign.seatNo" placeholder="输入地图上显示的数字即可 例:43"></el-input>
         </el-form-item>
 
-        <!--        <el-form-item prop="startTime" label="开始时间">-->
-        <!--          <el-time-picker placeholder="开始时间" v-model="formLabelAlign.startTime" style="width: 100%"></el-time-picker>-->
-        <!--        </el-form-item>-->
-
-
-        <!--        <el-form-item prop="endTime" label="结束时间">-->
-        <!--          <el-time-picker placeholder="结束时间" v-model="formLabelAlign.endTime" style="width: 100%"></el-time-picker>-->
-        <!--        </el-form-item>-->
-
         <el-form-item label-width="0">
           <el-button :disabled="btnActive" :loading="loading" @click="submit('Form')" style="width: 100%"
                      type="primary">抢座
@@ -51,6 +42,7 @@
           <div>①立即开始不可选取座位，只要自习室有空位则立即自动预约并签到</div>
           <div>②明早开始可选取座位，第二天6点才开始执行抢座，且可能需要手动签到</div>
           <div>③若已签到其他自习室位置，则任务会执行失败</div>
+          <div>④立即开始目前仅支持6楼声像自习室</div>
         </el-tag>
       </el-form>
 
@@ -83,10 +75,7 @@ export default {
       },
       loading: false,
       state: '',
-      options: [{
-        value: '2062',
-        label: '东区6楼声像阅览室'
-      }],
+      options: this.$rooms,
       types: [{
         value: '1',
         label: '立即开始'
@@ -95,15 +84,9 @@ export default {
         label: '明早开始'
       }],
       rules: {
-        roomID: [
-          {required: true, message: '请选择自习室', trigger: 'blur'},
-        ],
-        type: [
-          {required: true, message: '请选择任务类型', trigger: 'blur'},
-        ],
-        seatNo: [
-          {required: true, validator: isNum, trigger: 'blur'},
-        ]
+        roomID: [{required: true, message: '请选择自习室', trigger: 'blur'}],
+        type: [{required: true, message: '请选择任务类型', trigger: 'blur'}],
+        seatNo: [{required: true, validator: isNum, trigger: 'blur'}]
       }
     }
   },
@@ -124,16 +107,16 @@ export default {
           //     + (endTime.getHours() * 60 + endTime.getMinutes());
           this.$http.post('autoGrab', {
             token: token,
-            type:this.formLabelAlign.type,
-            seatNo:this.formLabelAlign.seatNo
-            // roomID:this.formLabelAlign.roomID,
+            type: this.formLabelAlign.type,
+            seatNo: this.formLabelAlign.seatNo,
+            roomID:this.formLabelAlign.roomID,
             // time:time,
             // seatNo:this.formLabelAlign.seatNo
           }).then(r => {
             console.log(r.data)
             this.loading = false;
-            this.$msgbox.alert(r.data.msg,'提示',{
-              callback:() => {
+            this.$msgbox.alert(r.data.msg, '提示', {
+              callback: () => {
                 this.$router.go(0);
               }
             });
@@ -148,21 +131,21 @@ export default {
       this.$confirm('确定要取消抢座任务吗？', '提示', {
         confirmButtonText: '确定',
         callback: action => {
-          if(action=='confirm'){
-            const loading=this.$loading({
-              lock:true,
-              text:'取消中...'
+          if (action == 'confirm') {
+            const loading = this.$loading({
+              lock: true,
+              text: '取消中...'
             })
-            this.$http.post('cancelGrab',{
-              token:localStorage.getItem('token')
-            }).then(r=>{
-              if(r.data.code==0){
+            this.$http.post('cancelGrab', {
+              token: localStorage.getItem('token')
+            }).then(r => {
+              if (r.data.code == 0) {
                 this.$message.success(r.data.msg);
-              }else {
+              } else {
                 this.$message.error(r.data.msg);
               }
               this.$router.go(0);
-            }).finally(()=>loading.close());
+            }).finally(() => loading.close());
           }
         }
       })
@@ -171,8 +154,8 @@ export default {
   created() {
     const token = localStorage.getItem('token');
     if (token == null) {
-      this.$msgbox.alert('未登录无法使用此功能','提示',{
-        callback:()=>{
+      this.$msgbox.alert('未登录无法使用此功能', '提示', {
+        callback: () => {
           this.$router.push('/searchSeat')
         }
       })
