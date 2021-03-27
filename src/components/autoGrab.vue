@@ -117,7 +117,7 @@ export default {
             this.loading = false;
             this.$msgbox.alert(r.data.msg, '提示', {
               callback: () => {
-                this.$router.go(0);
+                location.reload()
               }
             });
           })
@@ -144,7 +144,7 @@ export default {
               } else {
                 this.$message.error(r.data.msg);
               }
-              this.$router.go(0);
+              location.reload()
             }).finally(() => loading.close());
           }
         }

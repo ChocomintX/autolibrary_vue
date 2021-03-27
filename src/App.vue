@@ -24,7 +24,7 @@ export default {
 }
 
 #main,html,body{
-
+  background-color: #f1f1f1;
   /*font-family: "微軟正黑體 Light";*/
 }
 

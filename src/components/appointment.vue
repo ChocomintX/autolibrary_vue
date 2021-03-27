@@ -65,37 +65,7 @@ export default {
         endTime: ''
       },
       loading:false,
-      options: [{
-        value: '2021',
-        label: '东区学习室2-1'
-      }, {
-        value: '2022',
-        label: '东区学习室2-2'
-      }, {
-        value: '2024',
-        label: '东区学习室2-4'
-      }, {
-        value: '2031',
-        label: '东区学习室3-1'
-      }, {
-        value: '2032',
-        label: '东区学习室3-2'
-      }, {
-        value: '2033',
-        label: '东区学习室3-3'
-      }, {
-        value: '2034',
-        label: '东区学习室3-4'
-      }, {
-        value: '2036',
-        label: '东区学习室3-6'
-      }, {
-        value: '2063',
-        label: '东区6楼电子阅览室'
-      }, {
-        value: '2062',
-        label: '东区6楼声像阅览室'
-      }],
+      options: this.$rooms,
       rules: {
         roomID: [
           {required: true, message: '请选择自习室', trigger: 'blur'},

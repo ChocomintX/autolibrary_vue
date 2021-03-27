@@ -3,7 +3,7 @@ import VueRouter from "vue-router"
 import home from "@/views/home";
 import searchSeat from "@/components/searchSeat";
 import autoGrab from "@/components/autoGrab";
-import login from "@/components/login";
+import login from "@/views/login";
 import appointment from "@/components/appointment";
 import cancelSeat from "@/components/cancelSeat";
 import searchPeople from "@/components/searchPeople";
@@ -13,9 +13,10 @@ Vue.use(VueRouter)
 export default new VueRouter({
     base:'/autolibrary/',
     routes: [
-        {path: '/', component: home},
+        {path: '/', component: home,redirect:'/searchSeat'},
         {
             path: '/',
+            redirect:'/searchSeat',
             component: home,
             children:[{
                 path:'/searchSeat',
