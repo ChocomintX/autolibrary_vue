@@ -17,10 +17,15 @@
         </el-form-item>
 
         <el-form-item label-width="0">
-          <el-button :loading="loading" @click="submit('Form')" style="width: 100%" type="primary">踢了</el-button>
+          <el-button :loading="loading" @click="submit('Form')" style="width: 100%" type="primary">查询占座用户</el-button>
         </el-form-item>
       </el-form>
 
+      <el-tag v-for="item in results" :key="item.value" v-show="results.length>0" style="font-size: 15px">
+        <div>{{ getInfo(item) }}</div>
+        <el-button v-show="item['Status']==2" type="danger" class="btn" @click="cancelSeat(item['Id'],2)">签退</el-button>
+        <el-button v-show="item['Status']==1" type="warning" class="btn" @click="cancelSeat(item['Id'],3)">取消预约</el-button>
+      </el-tag>
     </el-main>
   </el-container>
 </template>
@@ -46,6 +51,7 @@ export default {
         startTime: '',
         endTime: ''
       },
+      results:[],
       loading:false,
       options: this.$rooms,
       rules: {
@@ -66,12 +72,14 @@ export default {
           this.$http.post('cancelSeat',{
             token:localStorage.getItem('token'),
             roomID:this.formLabelAlign.roomID,
-            seatNo:this.formLabelAlign.seatNo
+            seatNo:this.formLabelAlign.seatNo,
+            type:1
           }).then(r=>{
             if(r.data.code==1){
               this.$message.error(r.data.msg);
             }else{
               this.$message.success(r.data.msg);
+              this.results=r.data.data
             }
             this.loading=false;
           })
@@ -80,8 +88,45 @@ export default {
           return false;
         }
       });
+    },
+    getInfo(item) {
+      if(this.results.length==0)
+        return '';
+      let time = item.StartTime.split(' ')[1] + '-' + item.EndTime.split(' ')[1];
 
+      let str = '姓名：' + item.real_name
+          + '\n预约时间：' + time;
 
+      return str
+    },
+    cancelSeat(id,type){
+      this.$confirm('确定要进行该操作吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('cancelSeat',{
+          token:localStorage.getItem('token'),
+          id:id,
+          type:type
+        }).then(r=>{
+          if(r.data.code==0){
+            this.$message.success(r.data.msg);
+          }else{
+            this.$message.error(r.data.msg);
+          }
+          this.submit('Form');
+        })
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     }
   },
   created() {
@@ -98,5 +143,23 @@ export default {
 </script>
 
 <style scoped>
+.el-tag {
+  height: auto;
+  width: 100%;
+  white-space: pre-line;
+  word-break: break-all;
+  margin-bottom: 20px;
+  position: relative;
+}
 
+.btn{
+  float: right;
+  width: 90px;
+  position: absolute;
+  font-size: 10px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  margin: 12px;
+}
 </style>

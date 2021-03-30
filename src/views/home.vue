@@ -4,7 +4,7 @@
       <div v-show="showNotify">
         <i class="el-icon-warning-outline" style="font-size: 21px;margin-left: 10px;margin-top: 3px"></i>
         <div class="scroll-group">
-          <div class="scroll-content">本网站的所有内容不用于盈利，仅供个人研究学习使用！</div>
+          <div class="scroll-content">本网站的所有内容不用于盈利，仅供个人研究学习使用！使用有疑问请联系qq：401162659</div>
         </div>
         <i class="el-icon-close" @click="showNotify=false"
            style="font-size: 21px;margin-right: 10px;margin-top: 3px"></i>
@@ -41,7 +41,14 @@
 
       <router-view></router-view>
     </el-main>
-    <el-footer id="footer">这是底部，还没写东西</el-footer>
+    <el-footer id="footer">
+      <div style="margin-bottom: 5px">Copyright © 2021
+        <a href="https://chocomint.cn" target="_blank" style="color: #939393">Chocomint</a>
+        All Rights Reserved</div>
+      <div>
+        <a href="http://beian.miit.gov.cn/" target="_blank" style="color: #939393">湘ICP备2021001152号-1</a>
+      </div>
+    </el-footer>
   </el-container>
 </template>
 
@@ -50,7 +57,7 @@ export default {
   name: "home",
   data() {
     return {
-      userInfo:null,
+      userInfo: null,
       isLogin: false,
       items: [
         {url: require("@/assets/1.jpg")},
@@ -61,12 +68,12 @@ export default {
       showNotify: true,
     }
   },
-  computed:{
-    state(){
-      if(this.userInfo==null)
+  computed: {
+    state() {
+      if (this.userInfo == null)
         return '还未登录，请先登录';
       else {
-        return '欢迎您：'+this.userInfo.real_name;
+        return '欢迎您：' + this.userInfo.real_name;
       }
     }
   },
@@ -78,19 +85,19 @@ export default {
     login() {
       this.$router.push('/login')
     },
-    sign(){
-      this.$http.post('sign',{
-        token:localStorage.getItem('token')
-      }).then(r=>{
-        let data=r.data;
-        if(data.code==0){
-          this.$msgbox.alert('签到成功！','提示');
-        }else{
-          this.$msgbox.alert('签到失败！请检查是否在预约前后十五分钟内','提示');
+    sign() {
+      this.$http.post('sign', {
+        token: localStorage.getItem('token')
+      }).then(r => {
+        let data = r.data;
+        if (data.code == 0) {
+          this.$msgbox.alert('签到成功！', '提示');
+        } else {
+          this.$msgbox.alert('签到失败！请检查是否在预约前后十五分钟内', '提示');
         }
       })
     },
-    exit(){
+    exit() {
       this.$confirm('确定要退出登录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -111,21 +118,21 @@ export default {
     }
   },
   created() {
-    let token=localStorage.getItem('token');
+    let token = localStorage.getItem('token');
     if (token != null) {
-      let load=this.$loading({
-        lock:true,
-        text:'获取登陆状态中...'
+      let load = this.$loading({
+        lock: true,
+        text: '获取登陆状态中...'
       });
-      this.$http.post('searchUserInfo',{
-        token:token
-      }).then(r=>{
-        if(r.data.code==0){
-          this.userInfo=JSON.parse(r.data.data);
-          this.isLogin=true;
+      this.$http.post('searchUserInfo', {
+        token: token
+      }).then(r => {
+        if (r.data.code == 0) {
+          this.userInfo = JSON.parse(r.data.data);
+          this.isLogin = true;
         }
         console.log(JSON.parse(r.data.data));
-      }).finally(()=>load.close())
+      }).finally(() => load.close())
       // this.$router.push('/searchSeat')
     }
   }
@@ -151,11 +158,13 @@ export default {
 }
 
 #footer {
-  background: gray;
+  background: #4b4b4b;
   display: -webkit-flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: gray;
+  font-size: 10px;
 }
 
 .row {
@@ -191,6 +200,7 @@ export default {
 
 .scroll-group {
   overflow: hidden;
+  width: 100%;
   margin: 0 10px 0 10px;
 }
 

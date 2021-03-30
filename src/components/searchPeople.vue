@@ -3,7 +3,7 @@
     <el-main>
       <el-form :rules="rules" ref="Form" label-position="left" label-width="80px" :model="formLabelAlign">
 
-        <el-form-item prop="name" label="座位号">
+        <el-form-item prop="name" label="姓名">
           <el-input v-model="formLabelAlign.name" placeholder="输入想找的同学姓名(支持模糊查询)"></el-input>
         </el-form-item>
 
@@ -43,7 +43,7 @@ export default {
       formLabelAlign: {
         name: ''
       },
-      loading: false,
+      loading: true,
       result: [],
       rules: {
         name: [{required: true, message: '请输入姓名 只有一部分也行', trigger: 'blur'}]
@@ -69,6 +69,8 @@ export default {
             if (r.data.code == 0) {
               this.$message.success('请求成功！');
               setTimeout(()=>location.reload(),1000)
+            }else{
+              this.$message.error(r.data.msg);
             }
           })
 
@@ -136,6 +138,7 @@ export default {
           }
           this.result = data.results.list;
         }else {
+          this.loading = false;
           clearInterval(id)
         }
       })
