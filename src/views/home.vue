@@ -27,16 +27,17 @@
         </div>
         <el-button type="primary" v-show="!isLogin" @click="login">登录</el-button>
 
-        <el-button type="primary" v-show="isLogin" @click="sign">签到</el-button>
+        <el-button type="primary" v-show="isLogin" @click="getMySeats">座位</el-button>
         <el-button type="danger" v-show="isLogin" @click="exit">退出</el-button>
       </div>
 
-      <el-tabs id="tabs" @tab-click="changeView">
+      <el-tabs v-show="isLogin" id="tabs" @tab-click="changeView">
         <el-tab-pane label="按座查人" name="searchSeat"></el-tab-pane>
         <el-tab-pane label="按人查座" name="searchPeople"></el-tab-pane>
         <el-tab-pane label="自动抢座" name="autoGrab"></el-tab-pane>
         <el-tab-pane label="暴力反占座" name="cancelSeat"></el-tab-pane>
         <el-tab-pane label="现在预约" name="appointment"></el-tab-pane>
+        <el-tab-pane label="后台管理" name="admin"></el-tab-pane>
       </el-tabs>
 
       <router-view></router-view>
@@ -71,7 +72,7 @@ export default {
   computed: {
     state() {
       if (this.userInfo == null)
-        return '还未登录，请先登录';
+        return '登录以使用更多功能';
       else {
         return '欢迎您：' + this.userInfo.real_name;
       }
@@ -85,17 +86,8 @@ export default {
     login() {
       this.$router.push('/login')
     },
-    sign() {
-      this.$http.post('sign', {
-        token: localStorage.getItem('token')
-      }).then(r => {
-        let data = r.data;
-        if (data.code == 0) {
-          this.$msgbox.alert('签到成功！', '提示');
-        } else {
-          this.$msgbox.alert('签到失败！请检查是否在预约前后十五分钟内', '提示');
-        }
-      })
+    getMySeats() {
+      this.$router.push('/mySeats')
     },
     exit() {
       this.$confirm('确定要退出登录吗？', '提示', {

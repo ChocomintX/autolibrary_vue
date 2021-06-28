@@ -31,7 +31,7 @@
           <el-input v-model="formLabelAlign.seatID" placeholder="输入地图上显示的数字即可 例:45"></el-input>
         </el-form-item>
         <el-form-item label-width="0">
-          <el-button :loading="loading" id="search" type="primary" @click="search" style="width: 100%">查询</el-button>
+          <el-button :loading="loading" id="search" type="primary" @click="search" style="width: 100%">查询当前座位用户</el-button>
         </el-form-item>
         <el-form-item label-width="0">
           <img id="searchImg" src="../assets/searchSeat.gif">
