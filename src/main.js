@@ -8,8 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 
-axios.defaults.baseURL='https://chocomint.cn/autolibrary/api/'
-// axios.defaults.baseURL='http://localhost:5000/autolibrary/api/'
+// axios.defaults.baseURL='https://chocomint.cn/autolibrary/api/'
+axios.defaults.baseURL='http://localhost:5000/autolibrary/api/'
 Vue.prototype.$http=axios
 
 Vue.prototype.$rooms=[{label: '东区6楼声像阅览室', value: '2062'}, {label: '东区6楼电子阅览室', value: '2063'},

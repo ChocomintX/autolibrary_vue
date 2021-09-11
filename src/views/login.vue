@@ -74,6 +74,14 @@ export default {
       });
 
     }
+  },
+  created() {
+    let tokenList=localStorage.getItem('tokenList');
+    if(tokenList==null){
+      tokenList=[];
+      console.log(JSON.stringify(tokenList));
+      localStorage.setItem('tokenList',JSON.stringify(tokenList))
+    }
   }
 }
 </script>

@@ -28,7 +28,7 @@
         <el-button type="primary" v-show="!isLogin" @click="login">登录</el-button>
 
         <el-button type="primary" v-show="isLogin" @click="getMySeats">座位</el-button>
-        <el-button type="danger" v-show="isLogin" @click="exit">退出</el-button>
+        <el-button type="danger" v-show="isLogin" @click="exit">切换</el-button>
       </div>
 
       <el-tabs v-show="isLogin" id="tabs" @tab-click="changeView">
@@ -40,12 +40,26 @@
         <el-tab-pane label="后台管理" name="admin"></el-tab-pane>
       </el-tabs>
 
+      <el-dialog
+          :visible.sync="centerDialogVisible"
+          width="60%"
+          center>
+        <span>
+          <el-radio style="margin-top: 15px" v-for="(item,index) in tokenList" :key="item.token" v-model="currentUser" :label="index">
+            {{ item.info.identifyId }}  {{ item.info.real_name }}
+          </el-radio>
+        </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="login">添加新用户</el-button>
+        </span>
+      </el-dialog>
       <router-view></router-view>
     </el-main>
     <el-footer id="footer">
       <div style="margin-bottom: 5px">Copyright © 2021
         <a href="https://chocomint.cn" target="_blank" style="color: #939393">Chocomint</a>
-        All Rights Reserved</div>
+        All Rights Reserved
+      </div>
       <div>
         <a href="http://beian.miit.gov.cn/" target="_blank" style="color: #939393">湘ICP备2021001152号-1</a>
       </div>
@@ -58,8 +72,11 @@ export default {
   name: "home",
   data() {
     return {
+      currentUser:1,
       userInfo: null,
       isLogin: false,
+      centerDialogVisible: false,
+      tokenList:null,
       items: [
         {url: require("@/assets/1.jpg")},
         {url: require("@/assets/2.jpg")},
@@ -79,6 +96,48 @@ export default {
     }
   },
   methods: {
+    init(){
+      let token = localStorage.getItem('token');
+      if (token != null) {
+        let tokenList = JSON.parse(localStorage.getItem('tokenList'));
+        let exist = false;
+        tokenList.forEach(e => {
+          if (e.token == token) {
+            this.userInfo = e.info;
+            exist = true;
+            this.isLogin = true;
+            this.tokenList=tokenList;
+            return
+          }
+        })
+
+        if (exist)
+          return
+
+        let load = this.$loading({
+          lock: true,
+          text: '获取登陆状态中...'
+        });
+        this.$http.post('searchUserInfo', {
+          token: token
+        }).then(r => {
+          if (r.data.code == 0) {
+            this.userInfo = JSON.parse(r.data.data);
+            this.isLogin = true;
+
+            const user = {
+              info: JSON.parse(r.data.data),
+              token: token
+            }
+            tokenList.push(user)
+            localStorage.setItem('tokenList', JSON.stringify(tokenList))
+            this.tokenList=tokenList;
+          }
+          console.log(JSON.parse(r.data.data));
+        }).finally(() => load.close())
+        // this.$router.push('/searchSeat')
+      }
+    },
     changeView(tab) {
       // console.log(tab,event)
       this.$router.push(tab.name)
@@ -90,43 +149,37 @@ export default {
       this.$router.push('/mySeats')
     },
     exit() {
-      this.$confirm('确定要退出登录吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        localStorage.clear();
-        this.$message({
-          type: 'success',
-          message: '退出登录成功！'
-        });
-        location.reload();
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        });
-      });
+      this.centerDialogVisible=true;
+      // this.$confirm('确定要退出登录吗？', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   localStorage.clear();
+      //   this.$message({
+      //     type: 'success',
+      //     message: '退出登录成功！'
+      //   });
+      //   location.reload();
+      // }).catch(() => {
+      //   this.$message({
+      //     type: 'info',
+      //     message: '已取消'
+      //   });
+      // });
+    }
+  },
+  watch:{
+    currentUser(newval,val){
+      const user=JSON.parse(localStorage.getItem('tokenList'))[newval];
+      this.userInfo=user.info;
+      console.log(user);
+      console.log(val,newval);
+      localStorage.setItem('token',user.token);
     }
   },
   created() {
-    let token = localStorage.getItem('token');
-    if (token != null) {
-      let load = this.$loading({
-        lock: true,
-        text: '获取登陆状态中...'
-      });
-      this.$http.post('searchUserInfo', {
-        token: token
-      }).then(r => {
-        if (r.data.code == 0) {
-          this.userInfo = JSON.parse(r.data.data);
-          this.isLogin = true;
-        }
-        console.log(JSON.parse(r.data.data));
-      }).finally(() => load.close())
-      // this.$router.push('/searchSeat')
-    }
+    this.init();
   }
 }
 </script>

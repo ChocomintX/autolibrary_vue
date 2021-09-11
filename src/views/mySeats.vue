@@ -24,7 +24,7 @@
         <div class="button-group">
           <el-button type="danger" @click="cancelSeat(item,2)" v-show="item.StatusCN=='已签到'">释放座位</el-button>
           <el-button type="warning" @click="cancelSeat(item,3)" v-show="item.StatusCN=='未签到'">取消预约</el-button>
-          <el-button type="success" v-show="item.StatusCN=='未签到'">立即签到</el-button>
+          <el-button type="success" @click="sign" v-show="item.StatusCN=='未签到'">立即签到</el-button>
         </div>
 <!--        {{item}}-->
 <!--        {{i}}-->
@@ -78,6 +78,7 @@ export default {
           }else{
             this.$message.error(r.data.msg);
           }
+          this.getSeats();
           // this.submit('Form');
         })
       }).catch(() => {
@@ -86,6 +87,19 @@ export default {
           message: '已取消'
         });
       });
+    },
+    sign(){
+      this.$http.post('sign',{
+        token:localStorage.getItem('token')
+      }).then(r=>{
+        if(r.data.code==0){
+          this.$message.success(r.data.msg);
+        }else{
+          this.$message.error(r.data.msg);
+        }
+        this.getSeats();
+        // this.submit('Form');
+      })
     }
   },
   created() {
