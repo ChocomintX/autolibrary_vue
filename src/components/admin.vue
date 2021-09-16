@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-main>
-      <el-form  ref="Form" label-position="left" label-width="80px" :model="formLabelAlign">
+      <el-form ref="Form" label-position="left" label-width="80px" :model="formLabelAlign">
         <el-form-item prop="roomID" label="选择功能">
           <el-select style="width: 100%" v-model="formLabelAlign.type" placeholder="请选择">
             <el-option
@@ -21,9 +21,14 @@
         </el-form-item>
       </el-form>
 
-      <el-tag v-for="item in results" :key="item.value" v-show="results.length>0" style="font-size: 15px">
-        <div>{{getInfo(item)}}</div>
-        <el-button type="danger" class="btn" @click="cancelSeat(item['stuNo'])">删除用户</el-button>
+      <el-tag v-for="item in results" :key="item.value" v-show="results!='{}'" style="font-size: 15px">
+        <div>{{ getInfo(item) }}</div>
+        <el-button v-show="formLabelAlign.type=='getAllLocalUser'" type="danger" class="btn"
+                   @click="cancelSeat(item['stuNo'])">删除用户
+        </el-button>
+        <el-button v-show="formLabelAlign.type=='getTasks'" type="danger" class="btn"
+                   @click="cancelTask(item['token'])">删除任务
+        </el-button>
       </el-tag>
     </el-main>
   </el-container>
@@ -35,55 +40,64 @@ export default {
   data() {
     return {
       formLabelAlign: {
-        type:'',
-        stuNo:'',
+        type: '',
+        stuNo: '',
       },
-      results:[{"2":"2"}],
-      loading:false,
-      options:[
+      results: [{"2": "2"}],
+      loading: false,
+      options: [
         {label: '查询用户', value: 'getAllLocalUser'},
         {label: '添加用户', value: 'addLocalUser'},
-        {label: '任务列表', value: 'getMisson'},
+        {label: '任务列表', value: 'getTasks'},
       ]
     }
   },
   methods: {
     submit() {
-      this.loading=true;
-      this.$http.post(this.formLabelAlign.type,{
-        token:localStorage.getItem('token'),
-        stuNo:this.formLabelAlign.stuNo,
-      }).then(r=>{
-        if(r.data.code==1){
+      this.loading = true;
+      this.$http.post(this.formLabelAlign.type, {
+        token: localStorage.getItem('token'),
+        stuNo: this.formLabelAlign.stuNo,
+      }).then(r => {
+        if (r.data.code == 1) {
           this.$message.error(r.data.msg);
-        }else{
+        } else {
           this.$message.success(r.data.msg);
-          this.results=r.data.data
+          this.results = r.data.data
           console.log(r.data)
         }
-        this.loading=false;
+        this.loading = false;
       })
     },
     getInfo(item) {
       console.log(item)
-      let res=''
-      res+=item.stuNo+'\n'
-      res+=item.token
+      let res = '';
+      if (this.formLabelAlign.type === 'getAllLocalUser') {
+        console.log((this.formLabelAlign.type));
+        res += item.stuNo + '\n'
+        res += item.token
+      } else if (this.formLabelAlign.type === 'getTasks') {
+        console.log((this.formLabelAlign.type));
+        res += item.name + '\n'
+        res += item.seatNo + '\n'
+        res += item.id + '\n'
+        res += item.status
+      }
       return res
     },
-    cancelSeat(stuNo){
+    cancelSeat(stuNo) {
       this.$confirm('确定要进行该操作吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.post('deleteLocalUser',{
-          token:localStorage.getItem('token'),
-          stuNo:stuNo
-        }).then(r=>{
-          if(r.data.code==0){
+        this.$http.post('deleteLocalUser', {
+          token: localStorage.getItem('token'),
+          stuNo: stuNo
+        }).then(r => {
+          if (r.data.code == 0) {
             this.$message.success(r.data.msg);
-          }else{
+          } else {
             this.$message.error(r.data.msg);
           }
           this.submit('Form');
@@ -98,13 +112,45 @@ export default {
           message: '已取消删除'
         });
       });
+    },
+    cancelTask(token) {
+      this.$confirm('确定要进行该操作吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('deleteTask', {
+          token: token
+        }).then(r => {
+          if (r.data.code == 0) {
+            this.$message.success(r.data.msg);
+          } else {
+            this.$message.error(r.data.msg);
+          }
+          this.submit('Form');
+        })
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+  },
+  watch: {
+    'formLabelAlign.type'() {
+      this.results='';
     }
   },
   created() {
-    let token=localStorage.getItem('token')
-    if(token==null){
-      this.$msgbox.alert('还未登录！','提示',{
-        callback:()=>{
+    let token = localStorage.getItem('token')
+    if (token == null) {
+      this.$msgbox.alert('还未登录！', '提示', {
+        callback: () => {
           this.$router.push('/searchSeat')
         }
       })
@@ -123,7 +169,7 @@ export default {
   position: relative;
 }
 
-.btn{
+.btn {
   float: right;
   width: 90px;
   position: absolute;
