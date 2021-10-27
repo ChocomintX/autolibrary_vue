@@ -23,9 +23,13 @@
 
       <el-tag v-for="item in results" :key="item.value" v-show="results!='{}'" style="font-size: 15px">
         <div>{{ getInfo(item) }}</div>
-        <el-button v-show="formLabelAlign.type=='getAllLocalUser'" type="danger" class="btn"
+        <el-button v-show="formLabelAlign.type=='getAllLocalUser'" type="primary"
+                   @click="addUserByToken(item['token'])">添加到本地用户列表
+        </el-button>
+        <el-button v-show="formLabelAlign.type=='getAllLocalUser'" type="danger"
                    @click="cancelSeat(item['stuNo'])">删除用户
         </el-button>
+
         <el-button v-show="formLabelAlign.type=='getTasks'" type="danger" class="btn"
                    @click="cancelTask(item['token'])">删除任务
         </el-button>
@@ -75,6 +79,7 @@ export default {
       if (this.formLabelAlign.type === 'getAllLocalUser') {
         console.log((this.formLabelAlign.type));
         res += item.stuNo + '\n'
+        res += item.name + '\n'
         res += item.token
       } else if (this.formLabelAlign.type === 'getTasks') {
         console.log((this.formLabelAlign.type));
@@ -113,6 +118,26 @@ export default {
         });
       });
     },
+    addUserByToken(token) {
+      let tokenList = JSON.parse(localStorage.getItem('tokenList'));
+      let exist = false;
+      tokenList.forEach(e => {
+        if (e.token === token) {
+          exist = true;
+        }
+      })
+
+      if (exist){
+        this.$message({
+          type: 'warning',
+          message: '该用户已添加'
+        });
+        return;
+      }
+
+      localStorage.setItem('token',token);
+      location.reload();
+    },
     cancelTask(token) {
       this.$confirm('确定要进行该操作吗？', '提示', {
         confirmButtonText: '确定',
@@ -120,7 +145,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http.post('deleteTask', {
-          token: token
+          token: localStorage.getItem('token'),
+          cancelToken: token
         }).then(r => {
           if (r.data.code == 0) {
             this.$message.success(r.data.msg);
@@ -143,7 +169,7 @@ export default {
   },
   watch: {
     'formLabelAlign.type'() {
-      this.results='';
+      this.results = '';
     }
   },
   created() {

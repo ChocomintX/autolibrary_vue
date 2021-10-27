@@ -45,13 +45,15 @@
           width="60%"
           center>
         <span>
-          <el-radio style="margin-top: 15px" v-for="(item,index) in tokenList" :key="item.token" v-model="currentUser" :label="index">
+          <el-radio style="margin-top: 15px" v-for="(item,index) in tokenList" :key="item.token" v-model="currentUser"
+                    :label="index">
             {{ item.info.identifyId }}  {{ item.info.real_name }}
           </el-radio>
         </span>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="login">添加新用户</el-button>
-        </span>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="login">添加</el-button>
+          <el-button type="danger" @click="unbind">解绑</el-button>
+        </div>
       </el-dialog>
       <router-view></router-view>
     </el-main>
@@ -72,11 +74,11 @@ export default {
   name: "home",
   data() {
     return {
-      currentUser:1,
+      currentUser: 0,
       userInfo: null,
       isLogin: false,
       centerDialogVisible: false,
-      tokenList:null,
+      tokenList: null,
       items: [
         {url: require("@/assets/1.jpg")},
         {url: require("@/assets/2.jpg")},
@@ -96,7 +98,7 @@ export default {
     }
   },
   methods: {
-    init(){
+    init() {
       let token = localStorage.getItem('token');
       if (token != null) {
         let tokenList = JSON.parse(localStorage.getItem('tokenList'));
@@ -106,7 +108,7 @@ export default {
             this.userInfo = e.info;
             exist = true;
             this.isLogin = true;
-            this.tokenList=tokenList;
+            this.tokenList = tokenList;
             return
           }
         })
@@ -131,12 +133,37 @@ export default {
             }
             tokenList.push(user)
             localStorage.setItem('tokenList', JSON.stringify(tokenList))
-            this.tokenList=tokenList;
+            this.tokenList = tokenList;
           }
           console.log(JSON.parse(r.data.data));
         }).finally(() => load.close())
         // this.$router.push('/searchSeat')
       }
+    },
+    unbind() {
+      this.$confirm('确定要解绑图书馆公众号吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('unbindUser', {
+          token: localStorage.getItem('token'),
+          stuNo: this.userInfo.identifyId
+        }).then(r => {
+          if (r.status == 200) {
+            this.$message.success(r.data);
+          } else {
+            this.$message.error('请求出错');
+          }
+          this.getSeats();
+          // this.submit('Form');
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
     },
     changeView(tab) {
       // console.log(tab,event)
@@ -149,7 +176,7 @@ export default {
       this.$router.push('/mySeats')
     },
     exit() {
-      this.centerDialogVisible=true;
+      this.centerDialogVisible = true;
       // this.$confirm('确定要退出登录吗？', '提示', {
       //   confirmButtonText: '确定',
       //   cancelButtonText: '取消',
@@ -169,13 +196,14 @@ export default {
       // });
     }
   },
-  watch:{
-    currentUser(newval,val){
-      const user=JSON.parse(localStorage.getItem('tokenList'))[newval];
-      this.userInfo=user.info;
+  watch: {
+    currentUser(newval, val) {
+      const user = JSON.parse(localStorage.getItem('tokenList'))[newval];
+      this.userInfo = user.info;
       console.log(user);
-      console.log(val,newval);
-      localStorage.setItem('token',user.token);
+      console.log(val, newval);
+      localStorage.setItem('token', user.token);
+      this.centerDialogVisible = false;
     }
   },
   created() {

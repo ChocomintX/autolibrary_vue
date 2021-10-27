@@ -85,7 +85,7 @@ export default {
       if(this.result.length==0)
         return '';
       let room = item.SeatInfo_Code.substring(7, 11);
-      let seat = item.SeatInfo_Code.substring(12, 15).replace('0', '');
+      let seat = item.SeatInfo_Code.substring(12, 15);
       let time = item.StartTime.split(' ')[1] + '-' + item.EndTime.split(' ')[1];
       this.$rooms.forEach(i => {
         if (i.value == room)
